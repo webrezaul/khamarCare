@@ -7,5 +7,4 @@ build
 .env.*
 README.md
 Dockerfile
-nginx.conf
 .dockerignore

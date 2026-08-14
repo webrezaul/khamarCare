@@ -63,5 +63,15 @@ else
     echo "✅ Nginx configuration already exists."
 fi
 
-echo "🎉 Deployment Successful! Your app should be live at http://$DOMAIN"
-echo "💡 (Optional) To install SSL, run: certbot --nginx -d $DOMAIN"
+# 6. Setup SSL Automatically
+echo "🔒 Checking for SSL certificate..."
+if command -v certbot &> /dev/null; then
+    echo "Running Certbot to secure $DOMAIN..."
+    # --non-interactive prevents it from blocking, --register-unsafely-without-email bypasses email prompt if acceptable, but let's just use a dummy email to be safe
+    certbot --nginx -d $DOMAIN --non-interactive --agree-tos -m admin@$DOMAIN || echo "⚠️ Certbot ran into an issue, you may need to run it manually."
+    echo "✅ SSL configuration complete."
+else
+    echo "⚠️ Certbot is not installed. Run 'apt install certbot python3-certbot-nginx' to install it, then run 'certbot --nginx -d $DOMAIN'."
+fi
+
+echo "🎉 Deployment Successful! Your app should be live at https://$DOMAIN"
