@@ -39,6 +39,8 @@ import MilkingMachineImportPage from './pages/hardware/MilkingMachineImportPage.
 import SyncDashboardPage from './pages/sync/SyncDashboardPage.jsx';
 import ReportsDashboardPage from './pages/ReportsDashboardPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
+import BreedingDashboardPage from './pages/breeding/BreedingDashboardPage.jsx';
+import AddBreedingPage from './pages/breeding/AddBreedingPage.jsx';
 
 import SalesDashboardPage from './pages/sales/SalesDashboardPage.jsx';
 import CustomersPage from './pages/sales/CustomersPage.jsx';
@@ -145,6 +147,8 @@ export default function App() {
           <Route path="sync" element={<SyncDashboardPage />} />
           <Route path="reports" element={<ReportsDashboardPage />} />
           <Route path="profile" element={<ProfilePage />} />
+          <Route path="breeding" element={<BreedingDashboardPage />} />
+          <Route path="breeding/add" element={<AddBreedingPage />} />
           
           <Route path="sales/dashboard" element={<SalesDashboardPage />} />
           <Route path="sales/customers" element={<CustomersPage />} />

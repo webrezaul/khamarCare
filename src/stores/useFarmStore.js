@@ -441,6 +441,55 @@ const useFarmStore = create((set, get) => ({
     }
   },
 
+  // ========= BREEDING =========
+  breedingRecords: [],
+  breedingLoading: false,
+
+  loadBreedingRecords: async (farmId) => {
+    set({ breedingLoading: true });
+    try {
+      const breedingRecords = await db.breeding_records.where('farmId').equals(farmId).reverse().sortBy('date');
+      set({ breedingRecords, breedingLoading: false });
+      return breedingRecords;
+    } catch (err) {
+      console.error('Load breeding error:', err);
+      set({ breedingLoading: false });
+      return [];
+    }
+  },
+
+  addBreedingRecord: async (recordData) => {
+    try {
+      const id = await db.breeding_records.add({
+        ...recordData,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      const record = await db.breeding_records.get(id);
+      
+      // Also update the cow's status to 'pregnant' or 'open' based on this if we wanted, but let's just save the record for now
+      // Actually, breeding status is usually 'pending' until confirmed pregnant.
+
+      set(s => ({ breedingRecords: [record, ...s.breedingRecords] }));
+      return record;
+    } catch (err) {
+      console.error('Add breeding error:', err);
+      return null;
+    }
+  },
+
+  updateBreedingRecord: async (id, updates) => {
+    try {
+      await db.breeding_records.update(id, { ...updates, updatedAt: new Date().toISOString() });
+      const record = await db.breeding_records.get(id);
+      set(s => ({ breedingRecords: s.breedingRecords.map(r => r.id === id ? record : r) }));
+      return record;
+    } catch (err) {
+      console.error('Update breeding error:', err);
+      return null;
+    }
+  },
+
   // ========= LOAD ALL DATA =========
   loadAllData: async (farmId) => {
     const store = get();
@@ -448,10 +497,10 @@ const useFarmStore = create((set, get) => ({
       store.loadAnimals(farmId),
       store.loadMilkRecords(farmId),
       store.loadFeedData(farmId),
-      store.loadFinanceData(farmId),
-      store.loadPregnancyRecords(farmId),
-      store.loadNotifications(farmId),
+      store.loadFinanceRecords(farmId),
       store.loadSettings(farmId),
+      store.loadNotifications(farmId),
+      store.loadBreedingRecords(farmId),
     ]);
   },
 }));
