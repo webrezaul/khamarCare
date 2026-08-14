@@ -9,7 +9,7 @@ const menuItems = [
   { path: '/chat', icon: '🤖', labelKey: 'nav.aiAssistant', color: '#E8F5E9', titleBn: 'এআই ভেট' },
   { path: '/notifications', icon: '🔔', labelKey: 'nav.notifications', color: '#E3F2FD' },
   { path: '/settings', icon: '⚙️', labelKey: 'nav.farmSettings', color: '#F3E5F5' },
-  { path: '/health', icon: '❤️', labelKey: 'nav.health', color: '#FFEBEE' },
+  { path: '/health', icon: '🩺', labelKey: 'nav.health', color: '#FFEBEE' },
   { path: '/breeding', icon: '🔬', labelKey: 'nav.breeding', color: '#E8F5E9' },
   { path: '/cattle?status=pregnant', icon: '🐄', labelKey: 'nav.pregnancy', color: '#FFF3E0', titleBn: 'গর্ভাবস্থা' },
   { path: '/cattle?type=calf', icon: '🐮', labelKey: 'nav.calves', color: '#E3F2FD', titleBn: 'বাছুর' },
