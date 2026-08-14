@@ -1,6 +1,6 @@
 // KhamarCare — Premium Cattle List Page
 import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Plus, Search, Filter } from 'lucide-react';
 import useFarmStore from '../../stores/useFarmStore.js';
@@ -13,9 +13,10 @@ export default function CattleListPage() {
   const lang = i18n.language;
   const navigate = useNavigate();
   const animals = useFarmStore(s => s.animals);
+  const [searchParams] = useSearchParams();
   const [search, setSearch] = useState('');
-  const [typeFilter, setTypeFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [typeFilter, setTypeFilter] = useState(searchParams.get('type') || 'all');
+  const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || 'all');
 
   const filtered = useMemo(() => {
     let list = [...animals];
