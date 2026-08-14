@@ -22,9 +22,12 @@ const dobFromAge = (years, months = 0) => {
 };
 
 export async function seedDemoData() {
-  // Check if already seeded
-  const existingUsers = await db.users.count();
-  if (existingUsers > 0) return false;
+  // Check if demo user already exists
+  const demoUser = await db.users.where('phone').equals('01700000000').first();
+  if (demoUser) {
+    const demoFarm = await db.farms.where('userId').equals(demoUser.id).first();
+    return { userId: demoUser.id, farmId: demoFarm?.id };
+  }
 
   // 1. Create User
   const userId = await db.users.add({
