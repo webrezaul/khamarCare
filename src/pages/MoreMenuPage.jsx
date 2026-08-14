@@ -19,8 +19,8 @@ const menuItems = [
   { path: '/hardware/rfid', icon: '📡', labelKey: 'nav.rfid', color: '#E8F5E9', titleBn: 'আরএফআইডি' },
   { path: '/hardware/milking-import', icon: '🥛', labelKey: 'nav.importMilk', color: '#FFF3E0', titleBn: 'মেশিন মিল্কিং' },
   { path: '/sync', icon: '☁️', labelKey: 'nav.cloudSync', color: '#E1F5FE', titleBn: 'ক্লাউড সিঙ্ক' },
-  { path: null, icon: '📊', labelKey: 'nav.reports', color: '#E8EAF6', soon: true },
-  { path: null, icon: '👤', labelKey: 'common.profile', color: '#EFEBE9', soon: true },
+  { path: '/reports', icon: '📊', labelKey: 'nav.reports', color: '#E8EAF6' },
+  { path: '/profile', icon: '👤', labelKey: 'common.profile', color: '#EFEBE9' },
 ];
 
 export default function MoreMenuPage() {

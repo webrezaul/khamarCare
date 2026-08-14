@@ -37,6 +37,8 @@ import WeightTrackerPage from './pages/hardware/WeightTrackerPage.jsx';
 import RFIDScanPage from './pages/hardware/RFIDScanPage.jsx';
 import MilkingMachineImportPage from './pages/hardware/MilkingMachineImportPage.jsx';
 import SyncDashboardPage from './pages/sync/SyncDashboardPage.jsx';
+import ReportsDashboardPage from './pages/ReportsDashboardPage.jsx';
+import ProfilePage from './pages/ProfilePage.jsx';
 
 import SalesDashboardPage from './pages/sales/SalesDashboardPage.jsx';
 import CustomersPage from './pages/sales/CustomersPage.jsx';
@@ -141,6 +143,8 @@ export default function App() {
           <Route path="hardware/rfid" element={<RFIDScanPage />} />
           <Route path="hardware/milking-import" element={<MilkingMachineImportPage />} />
           <Route path="sync" element={<SyncDashboardPage />} />
+          <Route path="reports" element={<ReportsDashboardPage />} />
+          <Route path="profile" element={<ProfilePage />} />
           
           <Route path="sales/dashboard" element={<SalesDashboardPage />} />
           <Route path="sales/customers" element={<CustomersPage />} />
