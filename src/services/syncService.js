@@ -55,7 +55,7 @@ export async function triggerSync() {
 async function pushLocalChanges(farmId) {
   // In a real implementation, you would track `sync_status = 'pending'` or `updated_at > last_sync_time`
   // For this MVP, we will simulate pushing local cattle data
-  const localCattle = await db.cattle.where('farmId').equals(farmId).toArray();
+  const localCattle = await db.animals.where('farmId').equals(farmId).toArray();
   
   // Since we don't have a real Supabase DB configured yet, this will fail gracefully or we can mock it
   if (supabase.supabaseUrl === 'https://placeholder-url.supabase.co') {
@@ -88,7 +88,7 @@ async function pullRemoteChanges(farmId) {
   if (error) throw error;
 
   if (remoteCattle && remoteCattle.length > 0) {
-    await db.cattle.bulkPut(remoteCattle);
+    await db.animals.bulkPut(remoteCattle);
   }
 }
 
