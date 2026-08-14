@@ -10,6 +10,8 @@
     "delete": "Delete",
     "edit": "Edit",
     "add": "Add",
+    "viewAll": "View All",
+    "greeting": "Hello, {{name}}",
     "search": "Search...",
     "filter": "Filter",
     "sort": "Sort",
