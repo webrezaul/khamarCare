@@ -2,7 +2,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Plus, Bell, Wheat, Receipt, X, Droplets, TrendingUp, DollarSign, Target, Activity, CheckCircle2, AlertTriangle, Syringe, BellRing } from 'lucide-react';
+import { Plus, Bell, Wheat, Receipt, X, Droplets, TrendingUp, DollarSign, Target, Activity, CheckCircle2, AlertTriangle, Syringe, BellRing, LogOut } from 'lucide-react';
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import useAuthStore from '../stores/useAuthStore.js';
 import useFarmStore from '../stores/useFarmStore.js';
@@ -159,11 +159,21 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
-        <div className="app-header-actions">
+        <div className="app-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div className="lang-toggle shadow-sm bg-white rounded-full p-1 border border-gray-100" style={{ background: 'white', border: '1px solid var(--border-color)', display: 'flex', borderRadius: '9999px', padding: '2px'}}>
             <button className={`lang-toggle-btn px-3 py-1 rounded-full text-xs font-bold transition-colors ${lang === 'bn' ? 'active-lang text-white' : 'text-gray-500'}`} onClick={() => i18n.changeLanguage('bn')} style={{ padding: '4px 12px', borderRadius: '9999px', fontSize: '12px', fontWeight: 'bold', background: lang === 'bn' ? 'var(--color-primary-500)' : 'transparent', color: lang === 'bn' ? 'white' : 'var(--text-secondary)'}}>বাং</button>
             <button className={`lang-toggle-btn px-3 py-1 rounded-full text-xs font-bold transition-colors ${lang === 'en' ? 'active-lang text-white' : 'text-gray-500'}`} onClick={() => i18n.changeLanguage('en')} style={{ padding: '4px 12px', borderRadius: '9999px', fontSize: '12px', fontWeight: 'bold', background: lang === 'en' ? 'var(--color-primary-500)' : 'transparent', color: lang === 'en' ? 'white' : 'var(--text-secondary)'}}>EN</button>
           </div>
+          <button 
+            onClick={() => {
+              useAuthStore.getState().logout();
+              navigate('/login');
+            }}
+            className="flex items-center justify-center rounded-full bg-white shadow-sm border border-gray-100"
+            style={{ width: '32px', height: '32px', color: 'var(--color-danger)', border: '1px solid #fee2e2', background: '#fef2f2' }}
+          >
+            <LogOut size={16} />
+          </button>
         </div>
       </header>
 
@@ -181,46 +191,65 @@ export default function DashboardPage() {
           <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '150px', height: '150px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)', filter: 'blur(20px)' }}></div>
           <div style={{ position: 'absolute', bottom: '-40px', left: '-20px', width: '200px', height: '200px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)', filter: 'blur(30px)' }}></div>
           
-          <div className="flex justify-between items-center relative z-10">
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-2">
-                <h2 className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.8)' }}>{lang === 'bn' ? 'মোট গবাদিপশু' : 'Total Cattle'}</h2>
+          {totalCattle === 0 ? (
+            <div className="flex flex-col items-center text-center relative z-10 py-6">
+              <div className="text-4xl mb-3">🐄</div>
+              <h2 className="text-xl font-bold text-white mb-2">{lang === 'bn' ? 'আপনার খামারে স্বাগতম!' : 'Welcome to your farm!'}</h2>
+              <p className="text-sm mb-6 px-4" style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.5' }}>
+                {lang === 'bn' ? 'এখনও কোনো গবাদিপশু যোগ করা হয়নি। আপনার খামারের যাত্রা শুরু করতে প্রথম পশুটি যোগ করুন।' : 'No cattle added yet. Add your first animal to start your farming journey.'}
+              </p>
+              <button 
+                onClick={(e) => { e.stopPropagation(); navigate('/cattle/add'); }}
+                className="rounded-full px-6 py-3 font-bold shadow-lg transition-transform active:scale-95 flex items-center justify-center gap-2"
+                style={{ background: 'white', color: 'var(--color-primary-600)', border: 'none', cursor: 'pointer' }}
+              >
+                <Plus size={18} /> {lang === 'bn' ? 'গবাদিপশু যোগ করুন' : 'Add Cattle'}
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="flex justify-between items-center relative z-10">
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-sm font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.8)' }}>{lang === 'bn' ? 'মোট গবাদিপশু' : 'Total Cattle'}</h2>
+                  </div>
+                  <div className="text-5xl font-extrabold text-white tracking-tight flex items-baseline gap-2" style={{ fontSize: '3rem', fontWeight: 800 }}>
+                    {totalCattle}
+                    <span className="text-lg font-medium" style={{ fontSize: '1.125rem', color: 'rgba(255,255,255,0.7)' }}>🐄</span>
+                  </div>
+                  <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full backdrop-blur-md border border-white/20 w-fit" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '9999px', padding: '4px 12px', display: 'inline-flex', alignItems: 'center', gap: '8px', marginTop: '8px'}}>
+                    <span className="w-2 h-2 rounded-full animate-pulse" style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4ade80' }}></span>
+                    <span className="text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.9)', fontSize: '12px' }}>
+                      {lang === 'bn' ? `আজকের লাভ: ${formatCurrency(todayProfit)}` : `Today's Profit: ${formatCurrency(todayProfit)}`}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex flex-col items-center">
+                  <CircularGauge score={profScore.score} level={profScore.level} lang={lang} />
+                </div>
               </div>
-              <div className="text-5xl font-extrabold text-white tracking-tight flex items-baseline gap-2" style={{ fontSize: '3rem', fontWeight: 800 }}>
-                {totalCattle}
-                <span className="text-lg font-medium" style={{ fontSize: '1.125rem', color: 'rgba(255,255,255,0.7)' }}>🐄</span>
+              
+              <div className="grid grid-4 gap-2 mt-6 rounded-2xl p-3 backdrop-blur-sm relative z-10" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginTop: '24px', background: 'rgba(0,0,0,0.1)', borderRadius: '16px', padding: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <div className="text-center">
+                  <div className="font-bold uppercase mb-1" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)' }}>{lang === 'bn' ? 'দুধেল' : 'Lactating'}</div>
+                  <div className="font-bold text-lg text-white" style={{ fontSize: '1.125rem' }}>{lactating}</div>
+                </div>
+                <div className="text-center" style={{ borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
+                  <div className="font-bold uppercase mb-1" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)' }}>{lang === 'bn' ? 'গর্ভবতী' : 'Pregnant'}</div>
+                  <div className="font-bold text-lg text-white" style={{ fontSize: '1.125rem' }}>{pregnant}</div>
+                </div>
+                <div className="text-center" style={{ borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
+                  <div className="font-bold uppercase mb-1" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)' }}>{lang === 'bn' ? 'বকনা' : 'Heifers'}</div>
+                  <div className="font-bold text-lg text-white" style={{ fontSize: '1.125rem' }}>{heifers}</div>
+                </div>
+                <div className="text-center" style={{ borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
+                  <div className="font-bold uppercase mb-1" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)' }}>{lang === 'bn' ? 'বাছুর' : 'Calves'}</div>
+                  <div className="font-bold text-lg text-white" style={{ fontSize: '1.125rem' }}>{calves}</div>
+                </div>
               </div>
-              <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full backdrop-blur-md border border-white/20 w-fit" style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '9999px', padding: '4px 12px', display: 'inline-flex', alignItems: 'center', gap: '8px', marginTop: '8px'}}>
-                <span className="w-2 h-2 rounded-full animate-pulse" style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#4ade80' }}></span>
-                <span className="text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.9)', fontSize: '12px' }}>
-                  {lang === 'bn' ? `আজকের লাভ: ${formatCurrency(todayProfit)}` : `Today's Profit: ${formatCurrency(todayProfit)}`}
-                </span>
-              </div>
-            </div>
-            
-            <div className="flex flex-col items-center">
-              <CircularGauge score={profScore.score} level={profScore.level} lang={lang} />
-            </div>
-          </div>
-          
-          <div className="grid grid-4 gap-2 mt-6 rounded-2xl p-3 backdrop-blur-sm relative z-10" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginTop: '24px', background: 'rgba(0,0,0,0.1)', borderRadius: '16px', padding: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
-            <div className="text-center">
-              <div className="font-bold uppercase mb-1" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)' }}>{lang === 'bn' ? 'দুধেল' : 'Lactating'}</div>
-              <div className="font-bold text-lg text-white" style={{ fontSize: '1.125rem' }}>{lactating}</div>
-            </div>
-            <div className="text-center" style={{ borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
-              <div className="font-bold uppercase mb-1" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)' }}>{lang === 'bn' ? 'গর্ভবতী' : 'Pregnant'}</div>
-              <div className="font-bold text-lg text-white" style={{ fontSize: '1.125rem' }}>{pregnant}</div>
-            </div>
-            <div className="text-center" style={{ borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
-              <div className="font-bold uppercase mb-1" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)' }}>{lang === 'bn' ? 'বকনা' : 'Heifers'}</div>
-              <div className="font-bold text-lg text-white" style={{ fontSize: '1.125rem' }}>{heifers}</div>
-            </div>
-            <div className="text-center" style={{ borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
-              <div className="font-bold uppercase mb-1" style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)' }}>{lang === 'bn' ? 'বাছুর' : 'Calves'}</div>
-              <div className="font-bold text-lg text-white" style={{ fontSize: '1.125rem' }}>{calves}</div>
-            </div>
-          </div>
+            </>
+          )}
         </div>
 
         {/* Action Center - Alerts & Notifications */}

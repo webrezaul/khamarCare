@@ -3,6 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useFarmStore from '../stores/useFarmStore.js';
+import useAuthStore from '../stores/useAuthStore.js';
 
 const menuItems = [
   { path: '/chat', icon: '🤖', labelKey: 'nav.aiAssistant', color: '#E8F5E9', titleBn: 'এআই ভেট' },
@@ -10,7 +11,7 @@ const menuItems = [
   { path: '/settings', icon: '⚙️', labelKey: 'nav.farmSettings', color: '#F3E5F5' },
   { path: '/health', icon: '❤️', labelKey: 'nav.health', color: '#FFEBEE' },
   { path: null, icon: '🔬', labelKey: 'nav.breeding', color: '#E8F5E9', soon: true },
-  { path: null, icon: '🤰', labelKey: 'nav.pregnancy', color: '#FFF3E0', soon: true },
+  { path: null, icon: '🐄', labelKey: 'nav.pregnancy', color: '#FFF3E0', soon: true },
   { path: null, icon: '🐮', labelKey: 'nav.calves', color: '#E3F2FD', soon: true },
   { path: '/sales/dashboard', icon: '💰', labelKey: 'nav.milkSales', color: '#E8F5E9', titleBn: 'দুধ বিক্রি' },
   { path: '/hardware/weight', icon: '⚖️', labelKey: 'nav.weight', color: '#E3F2FD', titleBn: 'ওজন স্কেল' },
@@ -56,6 +57,20 @@ export default function MoreMenuPage() {
               )}
             </button>
           ))}
+        </div>
+
+        {/* Logout Button */}
+        <div style={{ marginTop: '24px', padding: '0 16px' }}>
+          <button 
+            className="btn btn-secondary btn-full" 
+            onClick={() => {
+              useAuthStore.getState().logout();
+              navigate('/login');
+            }}
+            style={{ color: 'var(--color-danger)', border: '1px solid #fca5a5', background: '#fef2f2' }}
+          >
+            <span style={{ fontSize: '18px', marginRight: '8px' }}>🚪</span> {t('common.logout') || 'Logout'}
+          </button>
         </div>
 
         {/* App Info */}

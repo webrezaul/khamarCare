@@ -157,11 +157,13 @@ body {
   font-weight: var(--font-regular);
   line-height: var(--leading-normal);
   color: var(--text-primary);
-  background-color: var(--bg-primary);
+  background-color: #e5e7eb;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   min-height: 100dvh;
+  display: flex;
+  justify-content: center;
 }
 
 body[data-lang="en"] {
@@ -173,9 +175,15 @@ body[data-lang="bn"] {
 }
 
 #root {
+  width: 100%;
+  max-width: var(--max-width);
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  background-color: var(--bg-primary);
+  box-shadow: 0 0 40px rgba(0,0,0,0.08);
+  position: relative;
+  overflow-x: hidden;
 }
 
 a {

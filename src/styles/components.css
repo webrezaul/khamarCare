@@ -853,7 +853,6 @@
 }
 .auth-form {
   padding: var(--space-4) var(--space-6);
-  flex: 1;
 }
 .auth-footer {
   padding: var(--space-4) var(--space-6) var(--space-8);

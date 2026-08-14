@@ -11,6 +11,7 @@ import AppShell from './components/layout/AppShell.jsx';
 // Pages
 import SplashPage from './pages/SplashPage.jsx';
 import OnboardingPage from './pages/OnboardingPage.jsx';
+import UserManualPage from './pages/UserManualPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import FarmSetupPage from './pages/FarmSetupPage.jsx';
@@ -57,11 +58,22 @@ function Toast() {
   );
 }
 
-function ProtectedRoute({ children }) {
+function RootLayout() {
   const { isAuthenticated, isOnboarded } = useAuthStore();
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (!isOnboarded) return <Navigate to="/farm-setup" replace />;
-  return children;
+  const location = import('react-router-dom').then(m => m.useLocation); // Wait, useLocation is imported at the top, I can just use it directly! No, I must import it at the top. Wait, I will just use the one imported at the top.
+
+  if (!isAuthenticated) {
+    if (location.pathname === '/') {
+      return <OnboardingPage />;
+    }
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!isOnboarded) {
+    return <Navigate to="/farm-setup" replace />;
+  }
+
+  return <AppShell />;
 }
 
 export default function App() {
@@ -92,7 +104,7 @@ export default function App() {
       <Toast />
       <Routes>
         {/* Public Routes */}
-        <Route path="/onboarding" element={<OnboardingPage />} />
+        <Route path="/manual" element={<UserManualPage />} />
         <Route path="/login" element={
           isAuthenticated && isOnboarded ? <Navigate to="/" replace /> : <LoginPage />
         } />
@@ -105,41 +117,59 @@ export default function App() {
           <FarmSetupPage />
         } />
 
-        {/* Protected Routes with Bottom Nav */}
-        <Route element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
-          <Route path="/" element={<DashboardPage />} />
-          <Route path="/cattle" element={<CattleListPage />} />
-          <Route path="/cattle/add" element={<AddCattlePage />} />
-          <Route path="/cattle/:id" element={<CattleDetailPage />} />
-          <Route path="/milk" element={<MilkDashboardPage />} />
-          <Route path="/milk/add" element={<AddMilkPage />} />
-          <Route path="/feed" element={<FeedDashboardPage />} />
-          <Route path="/feed/add" element={<AddFeedPage />} />
-          <Route path="/feed/inventory" element={<FeedInventoryPage />} />
-          <Route path="/finance" element={<FinanceDashboardPage />} />
-          <Route path="/finance/income/add" element={<AddIncomePage />} />
-          <Route path="/finance/expense/add" element={<AddExpensePage />} />
-          <Route path="/more" element={<MoreMenuPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/notifications" element={<NotificationsPage />} />
-          <Route path="/chat" element={<AIChatPage />} />
-          <Route path="/health" element={<HealthDashboardPage />} />
-          <Route path="/health/add" element={<AddHealthRecordPage />} />
-          <Route path="/hardware/weight" element={<WeightTrackerPage />} />
-          <Route path="/hardware/rfid" element={<RFIDScanPage />} />
-          <Route path="/hardware/milking-import" element={<MilkingMachineImportPage />} />
-          <Route path="/sync" element={<SyncDashboardPage />} />
+        {/* Root Layout handles authentication routing */}
+        <Route path="/" element={<RootLayoutWrapper />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="cattle" element={<CattleListPage />} />
+          <Route path="cattle/add" element={<AddCattlePage />} />
+          <Route path="cattle/:id" element={<CattleDetailPage />} />
+          <Route path="milk" element={<MilkDashboardPage />} />
+          <Route path="milk/add" element={<AddMilkPage />} />
+          <Route path="feed" element={<FeedDashboardPage />} />
+          <Route path="feed/add" element={<AddFeedPage />} />
+          <Route path="feed/inventory" element={<FeedInventoryPage />} />
+          <Route path="finance" element={<FinanceDashboardPage />} />
+          <Route path="finance/income/add" element={<AddIncomePage />} />
+          <Route path="finance/expense/add" element={<AddExpensePage />} />
+          <Route path="more" element={<MoreMenuPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="notifications" element={<NotificationsPage />} />
+          <Route path="chat" element={<AIChatPage />} />
+          <Route path="health" element={<HealthDashboardPage />} />
+          <Route path="health/add" element={<AddHealthRecordPage />} />
+          <Route path="hardware/weight" element={<WeightTrackerPage />} />
+          <Route path="hardware/rfid" element={<RFIDScanPage />} />
+          <Route path="hardware/milking-import" element={<MilkingMachineImportPage />} />
+          <Route path="sync" element={<SyncDashboardPage />} />
           
-          <Route path="/sales/dashboard" element={<SalesDashboardPage />} />
-          <Route path="/sales/customers" element={<CustomersPage />} />
-          <Route path="/sales/add" element={<AddSalePage />} />
+          <Route path="sales/dashboard" element={<SalesDashboardPage />} />
+          <Route path="sales/customers" element={<CustomersPage />} />
+          <Route path="sales/add" element={<AddSalePage />} />
         </Route>
 
         {/* Fallback */}
-        <Route path="*" element={
-          <Navigate to={isAuthenticated && isOnboarded ? '/' : '/onboarding'} replace />
-        } />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
+}
+
+// Wrapper to access useLocation within BrowserRouter context
+import { useLocation } from 'react-router-dom';
+function RootLayoutWrapper() {
+  const { isAuthenticated, isOnboarded } = useAuthStore();
+  const location = useLocation();
+
+  if (!isAuthenticated) {
+    if (location.pathname === '/') {
+      return <OnboardingPage />;
+    }
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!isOnboarded) {
+    return <Navigate to="/farm-setup" replace />;
+  }
+
+  return <AppShell />;
 }

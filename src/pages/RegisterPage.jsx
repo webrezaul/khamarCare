@@ -6,7 +6,8 @@ import useAuthStore from '../stores/useAuthStore.js';
 import useToastStore from '../stores/useToastStore.js';
 
 export default function RegisterPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language;
   const navigate = useNavigate();
   const { register, registerWithDemo } = useAuthStore();
   const showToast = useToastStore(s => s.show);
@@ -14,6 +15,18 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState('');
   const [pin, setPin] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const handleDemo = async () => {
+    setLoading(true);
+    const success = await registerWithDemo();
+    setLoading(false);
+    if (success) {
+      showToast(lang === 'bn' ? 'ডেমো ডাটা সফলভাবে লোড হয়েছে' : 'Demo data loaded successfully', 'success');
+      navigate('/');
+    } else {
+      showToast(t('common.error'), 'error');
+    }
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -30,18 +43,6 @@ export default function RegisterPage() {
     setLoading(false);
     if (success) {
       navigate('/farm-setup');
-    } else {
-      showToast(t('common.error'), 'error');
-    }
-  };
-
-  const handleDemo = async () => {
-    setLoading(true);
-    const success = await registerWithDemo();
-    setLoading(false);
-    if (success) {
-      showToast('ডেমো ডাটা লোড হয়েছে! 🎉', 'success');
-      navigate('/');
     } else {
       showToast(t('common.error'), 'error');
     }
@@ -99,28 +100,29 @@ export default function RegisterPage() {
         >
           {loading ? t('common.loading') : t('auth.createAccount')}
         </button>
+      </form>
 
-        <div style={{ textAlign: 'center', margin: '16px 0', color: 'var(--text-tertiary)' }}>অথবা</div>
+      <div className="auth-footer" style={{ paddingBottom: 0 }}>
+        <p className="auth-footer-text">
+          {t('auth.haveAccount')}{' '}
+          <button className="auth-footer-link" onClick={() => navigate('/login')}>
+            {t('auth.login')}
+          </button>
+        </p>
+      </div>
 
+      <div style={{ padding: '0 24px', paddingBottom: '24px' }}>
+        <div style={{ textAlign: 'center', margin: '8px 0 16px 0', color: 'var(--text-tertiary)' }}>অথবা</div>
         <button
           type="button"
           className="btn btn-secondary btn-lg btn-full"
           onClick={handleDemo}
           disabled={loading}
         >
-          🐄 {t('farmSetup.loadDemo')}
+          🐄 {t('farmSetup.loadDemo') || (lang === 'bn' ? 'ডেমো ডাটা লোড করুন' : 'Load Demo Data')}
         </button>
         <p style={{ textAlign: 'center', fontSize: 'var(--text-xs)', color: 'var(--text-tertiary)', marginTop: 8 }}>
-          ১০টি গবাদি পশু, দুধ ও আর্থিক রেকর্ড সহ ডেমো ডাটা লোড হবে
-        </p>
-      </form>
-
-      <div className="auth-footer">
-        <p className="auth-footer-text">
-          {t('auth.haveAccount')}{' '}
-          <button className="auth-footer-link" onClick={() => navigate('/login')}>
-            {t('auth.login')}
-          </button>
+          {lang === 'bn' ? '১০টি গবাদি পশু, দুধ ও আর্থিক রেকর্ড সহ ডেমো ডাটা লোড হবে' : 'Loads demo data with 10 cattle, milk, and financial records'}
         </p>
       </div>
     </div>

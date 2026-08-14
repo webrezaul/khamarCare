@@ -13,11 +13,25 @@ const useAuthStore = create((set, get) => ({
   // Initialize — check if user exists
   initialize: async () => {
     try {
-      const users = await db.users.toArray();
-      if (users.length > 0) {
-        const user = users[0];
+      const activeUserId = localStorage.getItem('khamarcare_active_user');
+      let user = null;
+      
+      if (activeUserId) {
+        user = await db.users.get(parseInt(activeUserId));
+      }
+      
+      // Fallback for existing users before we added localStorage
+      if (!user) {
+        const users = await db.users.toArray();
+        if (users.length === 1) {
+          user = users[0];
+        }
+      }
+
+      if (user) {
         const farms = await db.farms.where('userId').equals(user.id).toArray();
         const farm = farms[0] || null;
+        localStorage.setItem('khamarcare_active_user', user.id);
         set({
           user,
           farm,
@@ -42,6 +56,7 @@ const useAuthStore = create((set, get) => ({
       if (result) {
         const user = await db.users.get(result.userId);
         const farm = await db.farms.get(result.farmId);
+        localStorage.setItem('khamarcare_active_user', user.id);
         set({
           user,
           farm,
@@ -73,6 +88,7 @@ const useAuthStore = create((set, get) => ({
         updatedAt: new Date().toISOString(),
       });
       const user = await db.users.get(userId);
+      localStorage.setItem('khamarcare_active_user', user.id);
       set({ user, isAuthenticated: true, isLoading: false });
       return true;
     } catch (err) {
@@ -89,6 +105,7 @@ const useAuthStore = create((set, get) => ({
       const user = await db.users.where('phone').equals(phone).first();
       if (user && user.pin === pin) {
         const farms = await db.farms.where('userId').equals(user.id).toArray();
+        localStorage.setItem('khamarcare_active_user', user.id);
         set({
           user,
           farm: farms[0] || null,
@@ -142,6 +159,7 @@ const useAuthStore = create((set, get) => ({
 
   // Logout
   logout: () => {
+    localStorage.removeItem('khamarcare_active_user');
     set({ user: null, farm: null, isAuthenticated: false, isOnboarded: false });
   },
 

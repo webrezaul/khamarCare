@@ -12,7 +12,7 @@ const slides = [
 export default function OnboardingPage() {
   const [current, setCurrent] = useState(0);
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const goNext = () => {
     if (current < slides.length - 1) {
@@ -47,6 +47,13 @@ export default function OnboardingPage() {
             {t('onboarding.skip')}
           </button>
         )}
+        <button 
+          className="btn btn-ghost btn-full" 
+          onClick={() => navigate('/manual')}
+          style={{ marginTop: '8px', color: 'var(--color-primary-600)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+        >
+          📖 {i18n.language === 'bn' ? 'ব্যবহার নির্দেশিকা পড়ুন' : 'Read User Manual'}
+        </button>
       </div>
     </div>
   );

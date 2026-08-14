@@ -6,7 +6,7 @@ import useAuthStore from '../stores/useAuthStore.js';
 import useToastStore from '../stores/useToastStore.js';
 
 export default function LoginPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const login = useAuthStore(s => s.login);
   const showToast = useToastStore(s => s.show);
@@ -27,6 +27,18 @@ export default function LoginPage() {
       navigate('/');
     } else {
       showToast('ফোন নম্বর বা পিন ভুল হয়েছে', 'error');
+    }
+  };
+
+  const handleDemo = async () => {
+    setLoading(true);
+    const success = await useAuthStore.getState().registerWithDemo();
+    setLoading(false);
+    if (success) {
+      showToast('ডেমো ডাটা লোড হয়েছে! 🎉', 'success');
+      navigate('/');
+    } else {
+      showToast(t('common.error'), 'error');
     }
   };
 
@@ -64,6 +76,16 @@ export default function LoginPage() {
           />
         </div>
 
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px', marginTop: '4px' }}>
+          <button 
+            type="button" 
+            onClick={() => showToast(i18n.language === 'bn' ? 'অনুগ্রহ করে অ্যাডমিনের সাথে যোগাযোগ করুন' : 'Please contact the administrator', 'info')}
+            style={{ background: 'none', border: 'none', color: 'var(--color-primary-600)', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}
+          >
+            {i18n.language === 'bn' ? 'পিন ভুলে গেছেন?' : 'Forgot PIN?'}
+          </button>
+        </div>
+
         <button
           type="submit"
           className="btn btn-primary btn-lg btn-full"
@@ -74,7 +96,7 @@ export default function LoginPage() {
         </button>
       </form>
 
-      <div className="auth-footer">
+      <div className="auth-footer" style={{ paddingBottom: 0 }}>
         <p className="auth-footer-text">
           {t('auth.noAccount')}{' '}
           <button className="auth-footer-link" onClick={() => navigate('/register')}>
@@ -82,6 +104,7 @@ export default function LoginPage() {
           </button>
         </p>
       </div>
+
     </div>
   );
 }
